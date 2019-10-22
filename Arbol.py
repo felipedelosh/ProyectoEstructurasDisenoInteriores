@@ -18,6 +18,8 @@ class Nodo:
         self.DER = None
         # Eje corresponde a si esta ubicado en x=0 o en y=1
         self.eje = 0
+        # Esta variable corresponde al nivel
+        self.nivel = 0
         """
         Variables x,y correspondientes a  graficas
         OJo: esto solo es para mostrar el arbol 
@@ -45,10 +47,10 @@ class Arbol:
 
     # Este metodo agrega un valor al arbol
     def ADD(self, x):
-        # raiz, dato a agregar (x, y), eje
-        self._ADD(self.raiz, x, 0, 110)
+        # raiz, dato a agregar (x, y), eje, nivel, referencia pintado
+        self._ADD(self.raiz, x, 0, 0, 110)
     # Este metodo es el que en realidad agrega el nodo al arbol
-    def _ADD(self, NODO, x, eje, newPosX):
+    def _ADD(self, NODO, x, eje, nivel, newPosX):
         # Si la raiz esta vacia pues se crea
         if(self.raiz.data == None):
             """
@@ -59,94 +61,126 @@ class Arbol:
             """
             self.raiz.data = x
             self.raiz.eje = 0
+            self.nivel = 0
             self.raiz.posx = 220
             self.raiz.posy = 20
             self.numeroDeNodos = 1
         else:
             """
             Procedo a buscar un espacio disponible.
+                1 - Verifico si debo comparar en x o en y
 
-            1 - Miro si estoy parado en el eje x o en el y
             """
-
-            if eje == 0:
+            if NODO.eje == 0:
                 """
-                Eje en 0 significa que voy a comparar con la componente en x
+                El nodo corresponde al eje x
+                Comparo los valores en el eje x
                 """
                 if NODO.data[0] <= x[0]:
-                    # Si la derecha esta vacia guardelo
+                    """
+                    Este valor debe de ir a la derecha comparado eje x 
+                    
+                    """
+                    # Miro si hay espacio
                     if NODO.DER == None:
+                        print("Entro DER", NODO.data[0], x[0])
                         # Creo un nodo nuevo
                         NODO.DER = Nodo()
                         # Meto el dato
                         NODO.DER.data = x
                         # Lo asocio con el eje y
                         NODO.DER.eje = 1
+                        # Le pongo el nivel
+                        NODO.DER.nivel = nivel
                         NODO.DER.posx = NODO.posx + newPosX 
                         NODO.DER.posy = NODO.posy + 50 
-                        self.numeroDeNodos = 1 + self.numeroDeNodos 
+                        self.numeroDeNodos = 1 + self.numeroDeNodos
                     else:
-                        # La derecha no tiene espacio recalculo y mando al siguiente
+                        # No hay espacio busque donde meter esa wea
                         newPosX = (int)(newPosX / 2)
-                        self._ADD(NODO.DER, x, 1, newPosX)
+                        nivel = nivel + 1
+                        self._ADD(NODO.DER, x, 1, nivel, newPosX)
+                     
                 else:
-                    # Si la izq esta vacia guarde
+                    """
+                    Este valor debe de ir a la izq comparado eje x
+                    """
+                    # Miro si hay espacio
                     if NODO.IZQ == None:
-                        # Creo un nodo nuevo
+                        # Creo el Nodo
+                        print("Entro izq", NODO.data[0], x[0])
                         NODO.IZQ = Nodo()
-                        # Guardo el dato
+                        # Le metemos el 
                         NODO.IZQ.data = x
                         # Lo asocio con el eje y
                         NODO.IZQ.eje = 1
-                        NODO.IZQ.posx = NODO.posx - newPosX
-                        NODO.IZQ.posy = NODO.posy + 50
+                        # Le pongo el nivel
+                        NODO.IZQ.nivel = nivel
+                        NODO.IZQ.posx = NODO.posx - newPosX 
+                        NODO.IZQ.posy = NODO.posy + 50 
+                        # Registro el Nodo
                         self.numeroDeNodos = 1 + self.numeroDeNodos
                     else:
-                        # La izquierda no tiene espacio recalculo y mando al siguiente
+                        # No hay espacio busque donde meterlo
                         newPosX = (int)(newPosX / 2)
-                        self._ADD(NODO.IZQ, x, 1, newPosX)
+                        nivel = nivel + 1
+                        self._ADD(NODO.IZQ, x, 1, nivel, newPosX)
 
+                    """
+                    Fin de la condicion que agrega por el criterio de las x
+                    """     
             else:
                 """
-                eje en 1 sinifica que voy a comprar con la componente en y
+                Ahora seguimos comparando con la componente en y
                 """
                 if NODO.data[1] <= x[1]:
-                    # Si la derecha esta vacia guardelo
-                    # Si la derecha esta vacia guardelo
+                    # Hay espacio para la derecha?
                     if NODO.DER == None:
                         # Creo un nodo nuevo
                         NODO.DER = Nodo()
-                        # Meto el dato
+                        # Le metemos el 
                         NODO.DER.data = x
-                        # Lo asocio con el eje x
+                        # Lo Asociamos con el eje x
                         NODO.DER.eje = 0
+                        # Le ponemos el nivel
+                        NODO.DER.nivel = nivel
+                        # Para graficar el arbolito
                         NODO.DER.posx = NODO.posx + newPosX 
                         NODO.DER.posy = NODO.posy + 50 
-                        self.numeroDeNodos = 1 + self.numeroDeNodos 
-                    else:
-                        # La derecha no tiene espacio recalculo y mando al siguiente
-                        newPosX = (int)(newPosX / 2)
-                        self._ADD(NODO.DER, x, 0, newPosX)
-                else:
-                    # Si la izq esta vacia guarde
-                    if NODO.IZQ == None:
-                        # Creo un nodo nuevo
-                        NODO.IZQ = Nodo()
-                        # Guardo el dato
-                        NODO.IZQ.data = x
-                        # Lo asocio con el eje x
-                        NODO.IZQ.eje = 0
-                        NODO.IZQ.posx = NODO.posx - newPosX
-                        NODO.IZQ.posy = NODO.posy + 50
+                        # Registro en el contador de nodos
                         self.numeroDeNodos = 1 + self.numeroDeNodos
                     else:
-                        # La izquierda no tiene espacio recalculo y mando al siguiente
+                        # No hay espacio procedo a buscar
                         newPosX = (int)(newPosX / 2)
-                        self._ADD(NODO.IZQ, x, 0, newPosX)
-                        
-                        
+                        nivel = nivel + 1
+                        self._ADD(NODO.DER, x, 0, nivel, newPosX)
+                else:
+                    # hay espacio pa la izq
+                    if NODO.IZQ == None:
+                        # Creo un nodo nuevo 
+                        NODO.IZQ = Nodo()
+                        # Metemos el dato
+                        NODO.IZQ.data = x
+                        # Lo asociamos con el eje x
+                        NODO.IZQ.eje = 0
+                        # Le ponemos nivel 
+                        NODO.IZQ.nivel = nivel
+                        NODO.IZQ.posx = NODO.posx - newPosX 
+                        NODO.IZQ.posy = NODO.posy + 50 
+                        # Registro en el contador de nodos
+                        self.numeroDeNodos = 1 + self.numeroDeNodos
+                    else:
+                        # No hay espacio procedo a buscar
+                        newPosX = (int)(newPosX / 2)
+                        nivel = nivel + 1
+                        self._ADD(NODO.IZQ, x, 0, nivel, newPosX)
 
 
+
+
+            
+
+                        
     # Este metodo retorna los Nodos como puntos x,y en el plano
     def returnXYDeNodos(self):
         """
@@ -164,7 +198,6 @@ class Arbol:
             self._returnXYDeNodos(NODO.DER)
 
 
-
     # Este metodo es solo para pruebas
     def inorder(self):
         self._inorder(self.raiz)
@@ -174,16 +207,3 @@ class Arbol:
             self._inorder(NODO.IZQ)
             print(NODO.data)
             self._inorder(NODO.DER)
-
-
-
-a  = Arbol()
-a.ADD((5, 8))
-a.ADD((10, 15))
-a.ADD((1, 13))
-a.ADD((20, 12))
-a.ADD((11, 15))
-a.ADD((14, 8))
-
-
-a.inorder()

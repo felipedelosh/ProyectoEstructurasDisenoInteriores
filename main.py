@@ -24,6 +24,8 @@ Se declara un metodo capaz de detectar si los botones han sido clickeados
 from tkinter import *
 # Se importa aquello que frena la velocidad de ejecucion
 from time import *
+# Se importa el arbol
+from Arbol import *
 
 
 class Software:
@@ -38,13 +40,14 @@ class Software:
         self.telaPANELDECONTROL = Canvas(self.pantalla, height=600, width=200, bg="blue2")
         self.btnADDpunto = Button(self.telaPANELDECONTROL, text="Agregar", command=self.modoAgregarPuntos)
         self.btnEliminarPunto = Button(self.telaPANELDECONTROL, text="Eliminar", command=self.modoEliminarPuntos)
+        self.btnVerArbol = Button(self.telaPANELDECONTROL, text="Ver Arbol", command=self.verElArbol)
         """
         Variables
         """
         
         """
         self.bononesPlanoXY :
-            Se encarga de recopolar la informacion de los botones posx, poxy, informacion
+            Se encarga de recopilar la informacion de los botones posx, poxy, informacion
             posx : Es la posicion en el eje x que ocupa
             posy : Es la posicion en el eje y que ocupa
             informacion: como tal el tag x-y que ocupan asi el boton 7,18 sera String 7-18
@@ -65,7 +68,10 @@ class Software:
         self.elementoSeleccionado = None
         # Esto controla que solo pueda ser seleccionado 1 elemento a la vez
         self.tempSelected = None
-
+        """
+        Aqui estara el arbol
+        """
+        self.arbol = Arbol()
         """
         Fin de la declaracion de variables
         """
@@ -91,6 +97,7 @@ class Software:
         self.telaPANELDECONTROL.place(x=700, y=0)
         self.btnADDpunto.place(x=20, y=20)
         self.btnEliminarPunto.place(x=100, y=20)
+        self.btnVerArbol.place(x=50, y=500)
 
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
@@ -222,7 +229,12 @@ class Software:
             """
             El usuario desea agregar un punto al mapa
             """
-            pass
+            # Capturo los x, y
+            k = self.elementoSeleccionado.split("-")
+            x = int(k[0])
+            y = int(k[1])
+            # Ya capture los valores los agrego al arbol
+            self.arbol.ADD((x, y))
 
 
         if self.option == 2:
@@ -233,6 +245,27 @@ class Software:
 
         print(self.option)
         print(self.elementoSeleccionado)
+
+
+    def verElArbol(self):
+        """
+        El arbol cuando se construye se tagea con los x, y
+        recurpero esos puntos y procedo a pintarlos  en un toplevel
+        """
+        ventanaEmergente = Toplevel()
+        ventanaEmergente.title("Arbol")
+        ventanaEmergente.geometry("500x500")
+        tela = Canvas(ventanaEmergente, height=500, width=500, bg = "snow")
+
+        # Capturo los nodos del arbol
+        for i in self.arbol.returnXYDeNodos():
+            # Pinto un circulo
+            tela.create_oval(i[0], i[1], i[0]+50, i[1]+50)
+            # SE pinta la leyenda
+            tela.create_text(i[0]+24, i[1]+18, text=str(i[2]))
+
+
+        tela.place(x=0, y=0)
 
 
     def marcarPunto(self):
