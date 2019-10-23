@@ -414,31 +414,30 @@ class Software:
         k = (3, self.matrixMAPA[posx][posy][1])
         self.matrixMAPA[posx][posy] = k 
 
-        # Capturo todos esos puntos
-        """
-        Recorro toda la matrix y capturo en y
-        """
-        ejey = []
-        for i in self.matrixMAPA:
-            ejey.append(i[posy])
-
-
-        # Pinto todo hacia -y hasta que me encuentre obstaculo o el mapa permite
-        for y in range(0, posx):
-            pivote = (posx-1) - y
-            #Capturo ese dato
-            k = ejey[pivote]
-            # Si el valor en k esta permitido pinto
+        # Procedo a marcar todo hacia -y
+        for i in range(0, posx):
+            pivote = (posx-1) - i
+            k = self.matrixMAPA[pivote][posy]
+            # Si esta permitido marco como muro
             if k[0] != 1 and k[0] != 2 and k[0] != 3:
-                # Marco la pared
+                # Marco como muro
                 alpha = (2, k[1])
                 # Guardo
-                self.matrixMAPA[posx][pivote] = alpha
+                self.matrixMAPA[pivote][posy] = alpha
             else:
                 break
 
-        # Pinto todo hacia +y hasta que me encuentre obstaculo o el mapa permita
-        print("Pintar a la derecha de y")
+        # Procedo a marcar todo hacia +y
+        for i in range(posx+1, len(self.matrixMAPA[0])):
+            # Capturo
+            k = self.matrixMAPA[i][posy]
+            # Si esta permitido marco como muro
+            if k[0] != 1 and k[0] != 2 and k[0] != 3:
+                # marco como muro
+                alpha = (2, k[1])
+                self.matrixMAPA[i][posy] = alpha
+            else:
+                break
 
 
 
