@@ -26,7 +26,7 @@ Se declara la convencion de colores
 3 negro
 
 
-Se declara el metodo update_graphic que actualiza la pantalla cada 100 milisegundos
+Se declara el metodo update_graphic que actualiza la pantalla cada x milisegundos
 
 
 """
@@ -52,8 +52,8 @@ class Software:
         self.btnADDpunto = Button(self.telaPANELDECONTROL, text="Agregar", command=self.modoAgregarPuntos)
         self.btnEliminarPunto = Button(self.telaPANELDECONTROL, text="Eliminar", command=self.modoEliminarPuntos)
         self.btnVerArbol = Button(self.telaPANELDECONTROL, text="Ver Arbol", command=self.verElArbol)
-        self.btnRepresetar = Button(self.telaPANELDECONTROL, text="Representar Interior", command=self.representarArbolAutomatico)
-        self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Representar Paso a Paso", command=self.representarArbolAutomatico)
+        self.btnRepresetar = Button(self.telaPANELDECONTROL, text="PINTAR PAREDES", command=self.representarArbolAutomatico)
+        self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Paso a Paso", command=self.representarArbolPasoAPaso)
         """
         Variables
         """
@@ -127,6 +127,7 @@ class Software:
         self.btnEliminarPunto.place(x=100, y=20)
         self.btnVerArbol.place(x=50, y=500)
         self.btnRepresetar.place(x=20, y=100)
+        self.btnRepresetarPasoAPaso.place(x=20, y=140)
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -137,7 +138,7 @@ class Software:
     
     def update_graphic(self):
         """
-        Este metodo actualiza la pantalla cada 100 milisegundos.
+        Este metodo actualiza la pantalla cada x milisegundos.
         Ojo: aqui se comprueba como esta la self.matrixMAPA y luego es representada
         """
         for i in self.matrixMAPA:
@@ -147,7 +148,7 @@ class Software:
                 # Lo pinto del color necesario
                 self.telaMAPA.itemconfigure(item, fill=self.colores[j[0]])
                 
-        self.pantalla.after(100, self.update_graphic)
+        self.pantalla.after(60, self.update_graphic)
 
 
     def PINTARLEYENDAPLANOXY(self):
@@ -344,12 +345,14 @@ class Software:
         los valores van a ser capturados y luego reprensentados en una matrix
 
         """
-        print("Pintar paredes en auto")
+        if not self.stepByStep:
+            print("Pintar paredes en auto")
         # Reinicio la matrix
         self.reiniciarMatrix()
         if self.arbol.raiz.data != None:
             # Capturo todos los valores
             for i in self.arbol.returnArbolComoVector():
+                
                 # Esta variable captura si se debe de pintar en x o y
                 xy = int(i[1])
                 cordenadas = i[0]
@@ -362,10 +365,28 @@ class Software:
                 else:
                     self.crearParedY(int(cordenadas[0]), int(cordenadas[1]))
 
+                self.esperarUnRato()
+
             print("========LISTO PARA PINTAR EL SIGUIENTE================")
             
         else:
             print("Arbol vacio")
+
+    def representarArbolPasoAPaso(self):
+        """
+        Este metodo hace que se ejecute paso a paso la 
+        creacion de los muros
+        1 - un boleano controla si se hace o no paso a paso
+        2 - el color del boton paso a paso indica el estado
+        3 - se activa un sleep(x)
+        """
+        print("Paso a Paso")
+        if self.stepByStep:
+            self.stepByStep = False
+            self.btnRepresetarPasoAPaso['bg'] = "white"
+        else:
+            self.stepByStep = True
+            self.btnRepresetarPasoAPaso['bg'] = "red"
 
     def crearParedX(self, posx, posy):
         """
@@ -379,6 +400,7 @@ class Software:
 
         # Pinto hacia -x hasta que termine o hasta que encuentre un muro
         for i in range(0, posy):
+            
             iterator = (posy-1) - i
             # Capturo el punto
             # Si no es pared continue
@@ -439,6 +461,14 @@ class Software:
             else:
                 break
 
+    def esperarUnRato(self):
+        """
+        Este metodo espera un rato
+        """
+        if self.stepByStep:
+            sleep(0.7)
+            self.telaMAPA.update()
+            self.pantalla.update()
 
 
     def marcarPunto(self):
