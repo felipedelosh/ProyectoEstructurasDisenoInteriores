@@ -43,7 +43,10 @@ class Arbol:
     def __init__(self):
         self.raiz = Nodo()
         self.numeroDeNodos = 0
+        # Retorna los nodos como x,y,data para graficar solo el arbol
         self.vectorPosNodos = []
+        # Retorna el arbol como un vector para poder graficar el vector
+        self.arbolVectorizado = []
 
     # Este metodo agrega un valor al arbol
     def ADD(self, x):
@@ -178,7 +181,21 @@ class Arbol:
 
 
 
-            
+    # Este metodo retorna el arbol como un vector
+    def returnArbolComoVector(self):
+        # Reinicio el arbol
+        self.arbolVectorizado = []
+        self._returnArbolComoVector(self.raiz)
+        return self.arbolVectorizado
+
+    # El vector se reccore en pre-order para vectorizar
+    def _returnArbolComoVector(self, NODO):
+        if NODO != None:
+            k = [NODO.data, NODO.eje]
+            self.arbolVectorizado.append(k)
+            self._returnArbolComoVector(NODO.IZQ)
+            self._returnArbolComoVector(NODO.DER)
+
 
                         
     # Este metodo retorna los Nodos como puntos x,y en el plano
