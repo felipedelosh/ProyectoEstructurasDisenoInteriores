@@ -6,6 +6,8 @@ Se declara una estructura de tipo nodo que sera Kernel de un arbol
 >>Se comprobo el funcionamiento de esto por ello se agregan los valores 
 que seran los encargados de graficar
 
+>>Condicion para no almacenar nodos repetidos
+
 """
 
 class Nodo:
@@ -69,6 +71,10 @@ class Arbol:
             self.raiz.posy = 20
             self.numeroDeNodos = 1
         else:
+            # Ojo: No se guardan repetidos
+            if NODO.data == x:
+                return None
+
             """
             Procedo a buscar un espacio disponible.
                 1 - Verifico si debo comparar en x o en y
