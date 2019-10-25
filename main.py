@@ -326,7 +326,8 @@ class Software:
             k= self.elementoSeleccionado.split("-")
             x = int(k[0])
             y = int(k[1])
-            print("info",k)
+            
+            self.arbol.eliminarNodo((x, y))
 
         if self.option == 3:
             # Si no se ha seleccionado el punto A capturelo
@@ -381,7 +382,7 @@ class Software:
             print("Pintar paredes en auto")
         # Reinicio la matrix
         self.reiniciarMatrix()
-        if self.arbol.raiz.data != None:
+        if self.arbol.raiz != None:
             # Capturo todos los valores
             for i in self.arbol.returnArbolComoVector():
                 

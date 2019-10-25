@@ -274,10 +274,63 @@ class Arbol:
 
 
     def eliminarNodo(self, data):
-        k = self.buscarNodo(data)
+        """
+        Este metodo es muy diferente al buscar, aqui tenemos que capturar el hijo 
+        desde el padre... eliminaremos el hijo.
+        """
+        self.nodoTemporal = None
+        self._BuscarParaEliminar(self.raiz, data)
 
-        if k != None:
-            print("Se puede")
+        if self.nodoTemporal != None:
+            # Caso Es la raiz y no tiene hijos
+            if self.nodoTemporal == self.raiz:
+                if self.raiz.DER == None and self.raiz.IZQ == None:
+                    self.raiz = None
+            else:
+                # Sera que esta a la derecha?
+                if self.nodoTemporal.DER != None:
+                    if self.nodoTemporal.DER.data == data:
+                        print("Esta a la derecha pa borrar")
+
+
+                #Sera que esta a la izquierda?
+                if self.nodoTemporal.IZQ != None:
+                    if self.nodoTemporal.IZQ.data == data:
+                        print("Esta a la IZq pa borrarlo")                
+
+    def _BuscarParaEliminar(self, NODO, data):
+        """
+        Este metodo es mas diferente xq yo los capturo por el padre 
+        y le borro el hijo
+        """
+        # Sera que es la raiz?
+        if self.raiz.data == data:
+            self.nodoTemporal = NODO
+        else:
+            # Tiene derecha?
+            if NODO.DER != None:
+                # Sera que es el de la derecha?
+                if NODO.DER.data == data:
+                    self.nodoTemporal = NODO
+                else:
+                    # Busquelo por la derecha
+                    self._BuscarParaEliminar(NODO.DER, data)
+                
+            # Tiene IZQ
+            if NODO.IZQ != None:
+                # Sera que es el de la izq
+                if NODO.IZQ.data == data:
+                    self.nodoTemporal = NODO
+                else:
+                    # busquelo por la izquierda
+                    self._BuscarParaEliminar(NODO.IZQ, data)
+    
+            
+
+
+
+
+            
 
     
 
@@ -416,3 +469,17 @@ class Arbol:
                 node = self._searchNode(label, parent.hasRightChild())
                 #Y si no lo encuentra los busca por el hijo derecho
             return node
+
+a = Arbol()
+a.ADD((5, 8), "X")
+a.ADD((1, 13), "X")
+a.ADD((10, 15), "X")
+a.ADD((20, 12), "X")
+a.ADD((11, 15), "X")
+a.ADD((14, 8), "X")
+
+print(a.returnArbolComoVector())
+
+a.eliminarNodo((20, 12))
+
+print(a.returnArbolComoVector())
