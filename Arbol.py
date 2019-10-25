@@ -17,7 +17,9 @@ class Nodo:
         """
         self.IZQ = None
         self.data = None
+        self.etiqueta = None
         self.DER = None
+        self.padre = None
         # Eje corresponde a si esta ubicado en x=0 o en y=1
         self.eje = 0
         # Esta variable corresponde al nivel
@@ -32,6 +34,52 @@ class Nodo:
         """
         Variables 
         """
+        
+    def getLabel(self):
+        return self.etiqueta
+    
+    def getParent (self):
+        return self.padre
+    
+    def getRightChild(self):
+        return self.DER
+    
+    def getLeftChild(self):
+        return self.IZQ
+        
+    def setLabel(self, label):
+        self.etiqueta = label
+    
+    def setParent (self, parent):
+        self.padre = parent
+    
+    def setRightChild(self, child):
+        self.DER = child
+        
+    def setLeftChild(self, child):
+        self.IZQ = child
+        
+    def hasRightChild(self):
+        return self.DER
+        
+    def hasLeftChild(self):
+        return self.IZQ
+        
+    def getBF(self):
+        return self._bf
+    
+    def setBF(self, bf):
+        self._bf = bf
+    
+    def isRightChild(self):
+        return(self.getParent().hasRightChild() and self.etiqueta == self.DER)
+        
+    def isLeftChild(self):
+        return(self.getParent().hasLeftChild() and self.etiqueta == self.IZQ)
+    
+    def isLeaf (self):
+        return (not self.DER and not self.IZQ)
+
         
 
 
@@ -49,13 +97,16 @@ class Arbol:
         self.vectorPosNodos = []
         # Retorna el arbol como un vector para poder graficar el vector
         self.arbolVectorizado = []
+        # Si se desea buscar un nodo aqui quedara guardado
+        self.nodoTemporal = None
 
     # Este metodo agrega un valor al arbol
-    def ADD(self, x):
+    def ADD(self, x, label):
         # raiz, dato a agregar (x, y), eje, nivel, referencia pintado
-        self._ADD(self.raiz, x, 0, 0, 110)
+        self._ADD(self.raiz, x, label, 0, 0, 110, self.raiz)
     # Este metodo es el que en realidad agrega el nodo al arbol
-    def _ADD(self, NODO, x, eje, nivel, newPosX):
+    # Ojo: Solo cuando se carga desde JSON el label tiene valor
+    def _ADD(self, NODO, x, label, eje, nivel, newPosX, padre):
         # Si la raiz esta vacia pues se crea
         if(self.raiz.data == None):
             """
@@ -65,6 +116,8 @@ class Arbol:
             la raiz queda asociada en automatico en eje x : 0
             """
             self.raiz.data = x
+            self.raiz.etiqueta = label
+            self.raiz.padre = padre
             self.raiz.eje = 0
             self.nivel = 0
             self.raiz.posx = 220
@@ -108,7 +161,7 @@ class Arbol:
                         # No hay espacio busque donde meter esa wea
                         newPosX = (int)(newPosX / 2)
                         nivel = nivel + 1
-                        self._ADD(NODO.DER, x, 1, nivel, newPosX)
+                        self._ADD(NODO.DER, x, NODO.etiqueta, 1, nivel, newPosX ,NODO.padre)
                      
                 else:
                     """
@@ -133,7 +186,7 @@ class Arbol:
                         # No hay espacio busque donde meterlo
                         newPosX = (int)(newPosX / 2)
                         nivel = nivel + 1
-                        self._ADD(NODO.IZQ, x, 1, nivel, newPosX)
+                        self._ADD(NODO.IZQ, x,NODO.etiqueta,  1, nivel, newPosX, NODO.padre)
 
                     """
                     Fin de la condicion que agrega por el criterio de las x
@@ -162,7 +215,7 @@ class Arbol:
                         # No hay espacio procedo a buscar
                         newPosX = (int)(newPosX / 2)
                         nivel = nivel + 1
-                        self._ADD(NODO.DER, x, 0, nivel, newPosX)
+                        self._ADD(NODO.DER, x, NODO.etiqueta, 0, nivel, newPosX, NODO.padre)
                 else:
                     # hay espacio pa la izq
                     if NODO.IZQ == None:
@@ -182,10 +235,51 @@ class Arbol:
                         # No hay espacio procedo a buscar
                         newPosX = (int)(newPosX / 2)
                         nivel = nivel + 1
-                        self._ADD(NODO.IZQ, x, 0, nivel, newPosX)
+                        self._ADD(NODO.IZQ, x,NODO.etiqueta, 0, nivel, newPosX, NODO.padre)
 
 
+    def buscarNodo(self, data):
+        """
+        Este metodo busca un nodo y luego lo retorna
+        """
+        self.nodoTemporal = None
+        self._buscarNodo(self.raiz, data)
+        return self.nodoTemporal
 
+    def _buscarNodo(self, NODO, data):
+        # Si lo encontro retorne sino busquelo
+        if NODO.data == data:
+            self.nodoTemporal = NODO
+        else:
+            if NODO.DER != None:
+                self._buscarNodo(NODO.DER, data)
+            if NODO.IZQ != None:
+                self._buscarNodo(NODO.IZQ, data)
+
+
+    def modificarData(self, x, newX):
+        """
+        Este metodo le entra x que es un valor que existe en el arbol
+                             newX que es el nuevo valor que va a existir en el arbol
+
+                             Se busca el x y newX, x tiene que existir y newX no puede existir. 
+        """
+        """Si el valor viejo existe EXISTE"""
+        k = self.buscarNodo(x)
+        """Si el valor nuevo no existe"""    
+        m = self.buscarNodo(newX)
+        if k != None and m == None:
+            print("Modificando")
+            k.data = newX
+
+
+    def eliminarNodo(self, data):
+        k = self.buscarNodo(data)
+
+        if k != None:
+            print("Se puede")
+
+    
 
     # Este metodo retorna el arbol como un vector
     def returnArbolComoVector(self):
@@ -230,3 +324,95 @@ class Arbol:
             self._inorder(NODO.IZQ)
             print(NODO.data)
             self._inorder(NODO.DER)
+
+    def removeNode (self, label):
+        if(self.raiz != None):
+            targetNode = self.searchNode(label)
+            if(targetNode):
+                self._removeNode(targetNode)
+            else:
+                print("Element with label ", label, "does not exists!")
+        else:
+            print ("The tree is empty.")
+            
+    def _removeNode(self, NODO):
+        if(NODO.isLeaf()):
+            if(NODO.isLeftChild()):
+                NODO.getParent().setLeftChild(None)
+                #a mi padre le digo que ya no tiene hijo izquierdo
+                #Debo borrarlo en ambos sentidos el padre deja al hijo y 
+                #el hijo deja al padre
+            else:
+                NODO.getParent().setRightChild(None)
+            NODO.setParent(None)
+                #A mi me digo que ya no tengo papá
+        else:
+            if(NODO.hasLeftChild() and NODO.hasRightChild()):
+                #si tiene los dos hijos se busca el sucesor
+                suc = self._getSucessor(NODO.hasRightChild())
+                self._updateNode(NODO, suc)
+                if(suc.isLeaf()):
+                    suc.getParent().setLeftChild(None)
+                    suc.setParent(None)
+                    #Si es hoja sólo quito la referencia de su hijo izquierdo
+                else:
+                    suc.getParent().setLeftChild(suc.hasRightChild())
+                    #Padre, ponga como su hijo izquierdo al hijo derecho del sucesor
+                    suc.hasRightChild().setParent(suc.getParent())
+                    #y le dice al ihjo cuál va a ser su padre
+                    suc.setRightChild(None)
+                    suc.setParent(None)
+                    #borro referencias tanto del padre como del hijo
+            else:
+                if(NODO.isLeftChild()):
+                    if(NODO.hasLeftChild()):
+                        NODO.getParent().setLeftChild(NODO.hasLeftChild())
+                        NODO.hasLeftChild().setParent(NODO.getParent())
+                        NODO.setLeftChild(None)
+                        #quita referencia
+                    else:
+                        NODO.getParent().setLeftChild(NODO.hasRightChild())
+                        NODO.hasRightChild().setParent(NODO.getParent())
+                        NODO.setRightChild(None)
+                else:
+                    if(NODO.hasLeftChild()):
+                        NODO.getParent().setRightChild(NODO.hasLeftChild())
+                        NODO.hasLeftChild().setParent(NODO.getParent())
+                        NODO.setLefttChild(None)
+                    else:
+                        NODO.getParent().setRightChild(NODO.hasRightChild())
+                        NODO.hasRightChild().setParent(NODO.getParent())
+                        NODO.setRightChild(None)
+                NODO.setParent(None)
+                #sea cual sea el caso, al fin el nodo se tiene que desprender de su padre
+               
+                
+    def _updateNode(self, oldNode, newNode):
+        #oldNode.setValue(newNode.getValue())
+        oldNode.setLabel(newNode.getLabel())
+            
+    def _getSucessor (self, node):
+        lc = node.hasLeftChild()
+        if(lc):
+            return self._getSucessor(lc)
+        else:
+            return node
+        
+    def searchNode(self, label):
+        if(self.raiz):
+            return self._searchNode(label, self.raiz)
+        else:
+            print("The tree is empty.")
+            
+    def _searchNode(self, label, parent):
+        if(not parent):
+            return None
+        if(label == parent.getLabel()):
+            return parent
+        else:
+            node = self._searchNode(label, parent.hasLeftChild())
+            #busca por el hijo izquierdo
+            if(not node):
+                node = self._searchNode(label, parent.hasRightChild())
+                #Y si no lo encuentra los busca por el hijo derecho
+            return node

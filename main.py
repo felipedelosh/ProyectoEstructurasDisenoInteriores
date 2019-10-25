@@ -1,34 +1,20 @@
 """
 A los 21 dias de OCT de 2019
-
-
 Se crea la clase interfaz grafica
 Se declara self.telaMAPA :
-
                 Cumple la funcion de pintar el mapa de la casa
                 Se pinta primero las lineas x,y y sus respectivas leyendas(0,1,2,3 ...)
-
-
 Se declara un metodo capaz de pintar todos los botones en el eje x, y
-
 Se declara un metodo capaz de detectar si los botones han sido clickeados 
-
                 self.click: 1 - ver todo el vector self.bononesPlanoXY
                             2 - determinar si hay un click
                             3 - determinar quien fue clickeado
-
-
 Se declara la convencion de colores
-
 0 blanco
 1 verde
 2 rojo
 3 negro
-
-
 Se declara el metodo update_graphic que actualiza la pantalla cada x milisegundos
-
-
 """
 
 # Se importa lo que grafica
@@ -37,6 +23,8 @@ from tkinter import *
 from time import *
 # Se importa el arbol
 from Arbol import *
+
+import json
 
 
 class Software:
@@ -51,9 +39,11 @@ class Software:
         self.telaPANELDECONTROL = Canvas(self.pantalla, height=600, width=200, bg="blue2")
         self.btnADDpunto = Button(self.telaPANELDECONTROL, text="Agregar", command=self.modoAgregarPuntos)
         self.btnEliminarPunto = Button(self.telaPANELDECONTROL, text="Eliminar", command=self.modoEliminarPuntos)
+        self.btnModificarPunto = Button(self.telaPANELDECONTROL, text="Modificar", command=self.modoModificarPuntos)
         self.btnVerArbol = Button(self.telaPANELDECONTROL, text="Ver Arbol", command=self.verElArbol)
         self.btnRepresetar = Button(self.telaPANELDECONTROL, text="PINTAR PAREDES", command=self.representarArbolAutomatico)
         self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Paso a Paso", command=self.representarArbolPasoAPaso)
+        self.btnLoadJSON = Button(self.telaPANELDECONTROL, text="LOAD JSON", command=self.lecturaJSON)
         """
         Variables
         """
@@ -75,6 +65,7 @@ class Software:
             Se encarga de realizar una accion deacuerdo a lo que diga el panel de control
             1 > se quiere agregar un elemento
             2 > se quiere eliminar un elemento
+            3 > se quiere modificar un elemento
         """
         self.option = 0
         # Esto es el elemento sobre el que se realiza la opcion
@@ -85,16 +76,19 @@ class Software:
         # self.stepByStep = False >> Se pinta en automatico
         # self.stepByStep = True >> Se pinta paso a paso
         self.stepByStep = False
+        # Esto controla el modificar
+        self.PUNTOA = None
+        self.PUNTOB = None
         """
         Aqui estara el arbol
         """
         self.arbol = Arbol()
+        
         """
         Aqui esta la variable que controla la pintada de las paredes
         1 - se rellena por defecto (0, x-y) 0: esta libre, x>tagx y>tagy
         2 - se captura todos los puntos del arbol
         3 - se pone el primer punto y se empieza a pintar sea x o y hasta que el pitado de la pared este listo
-
         """
         self.matrixMAPA = []
         self.pintadoDeParedesListo = False
@@ -125,7 +119,9 @@ class Software:
         self.telaPANELDECONTROL.place(x=700, y=0)
         self.btnADDpunto.place(x=20, y=20)
         self.btnEliminarPunto.place(x=100, y=20)
-        self.btnVerArbol.place(x=50, y=500)
+        self.btnModificarPunto.place(x=20, y=60)
+        self.btnLoadJSON.place(x=100, y=60)
+        self.btnVerArbol.place(x=50, y=560)
         self.btnRepresetar.place(x=20, y=100)
         self.btnRepresetarPasoAPaso.place(x=20, y=140)
         # Se pintan las lineas
@@ -204,9 +200,7 @@ class Software:
         """
         Este metodo se encarga de rellenar la matrix que controla las 
         lineas que representan las paredes del interior
-
         (a, b)
-
         a > puede ser 0 o 1 : cero significa libre 1 significa pares
         b > tupla str(x-y)  x>pos en x donde estoy parado y>pos y donde estoy parado
         """
@@ -252,7 +246,6 @@ class Software:
         """
         r es un punto casteado a rectangulo x,y, x+10>>h
         p es un punto
-
         si el p esta dentro de r1 significa que se dio click
         """
         # Esta en el eje de las x?
@@ -280,6 +273,7 @@ class Software:
         self.option = 1
         self.btnADDpunto['bg'] = "red"
         self.btnEliminarPunto['bg'] = "white"
+        self.btnModificarPunto['bg'] = "white"
 
     def modoEliminarPuntos(self):
         """
@@ -289,6 +283,21 @@ class Software:
         self.option = 2
         self.btnADDpunto['bg'] = "white"
         self.btnEliminarPunto['bg'] = "red"
+        self.btnModificarPunto['bg'] = "white"
+
+    def modoModificarPuntos(self):
+        """
+        Supongase que el usuario desea modificar el punto de a, b
+        Ello implica que el option sea 3
+        """
+        self.option = 3
+        self.btnADDpunto['bg'] = "white"
+        self.btnEliminarPunto['bg'] = "white"
+        self.btnModificarPunto['bg'] = "red"
+        # Esto es para desmarcar los puntos anteriores
+        self.PUNTOA = None
+        self.PUNTOB = None
+
 
 
     def ejecutarOperacion(self):
@@ -302,17 +311,41 @@ class Software:
             """
             # Capturo los x, y
             k = self.elementoSeleccionado.split("-")
+            print("info",k)
             x = int(k[0])
             y = int(k[1])
             # Ya capture los valores los agrego al arbol
-            self.arbol.ADD((x, y))
+            # Ojo: En modo creacion no entran
+            self.arbol.ADD((x, y), "X")
 
 
         if self.option == 2:
             """
             El usuario desea eliminar un punto del mapa
             """
-            pass
+            k= self.elementoSeleccionado.split("-")
+            x = int(k[0])
+            y = int(k[1])
+            print("info",k)
+
+        if self.option == 3:
+            # Si no se ha seleccionado el punto A capturelo
+            if self.PUNTOA == None and self.PUNTOB == None:
+                k = self.elementoSeleccionado.split("-")
+                x = int(k[0])
+                y = int(k[1])
+                self.PUNTOA = (x, y)
+            else:
+                # YA se selecciono el punto A si es diferente de B se captura
+                k = self.elementoSeleccionado.split("-")
+                x = int(k[0])
+                y = int(k[1])
+                # Creo el punto para poder comparar que A sea diferente de B
+                temp = (x, y)
+                if temp != self.PUNTOA:
+                    self.PUNTOB = temp
+                    # Lo modifico en el arbol
+                    self.arbol.modificarData(self.PUNTOA, self.PUNTOB)
 
         print(self.option)
         print(self.elementoSeleccionado)
@@ -343,7 +376,6 @@ class Software:
         """
         Si el arbol esta listo, hay valores en el arbol
         los valores van a ser capturados y luego reprensentados en una matrix
-
         """
         if not self.stepByStep:
             print("Pintar paredes en auto")
@@ -470,6 +502,14 @@ class Software:
             self.telaMAPA.update()
             self.pantalla.update()
 
+
+    def lecturaJSON(self):
+
+        with open('data.json','r') as file:
+            data = json.load(file)
+            
+            for coordenada in data['coordenadas']:
+                self.arbol.ADD((coordenada['x'], coordenada['y']), coordenada['etiqueta'])
 
     def marcarPunto(self):
         """
