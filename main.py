@@ -44,6 +44,7 @@ class Software:
         self.btnRepresetar = Button(self.telaPANELDECONTROL, text="PINTAR PAREDES", command=self.representarArbolAutomatico)
         self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Paso a Paso", command=self.representarArbolPasoAPaso)
         self.btnLoadJSON = Button(self.telaPANELDECONTROL, text="LOAD JSON", command=self.lecturaJSON)
+        self.btnConfiguracion = Button(self.telaPANELDECONTROL, text="CONFIG", command=self.abrirDialogoDeConfiguracion)
         """
         Variables
         """
@@ -92,8 +93,22 @@ class Software:
         """
         self.matrixMAPA = []
         self.pintadoDeParedesListo = False
-        # Aqui se guardan los colores
+        # Aqui se guardan los colores que se muestan en pantalla
         self.colores = ["white", "green", "red", "black"]
+        """
+        self.tempColores es un vector que tiene el nombre de los colores
+        permiridos por tkinter para que el usuario edite los colores 
+        mostrados en pantalla a su gusto
+        """
+        self.tempColores = ["snow", "white", "white smoke", "linen",
+         "bisque", "azure", "gray", "navy", "blue", "sky blue", "cyan",
+          "green", "khaki", "yellow", "salmon", "tomato", "red", "pink", 
+          "blue2", "sienna1", "red3", "gray", "black"]
+        # esta variable sirve para moverse entre los colores
+        self.tempNavegarColoresESPACIO = 0
+        self.tempNavegarColoresPARED = 0
+        self.tempNavegarColoresNODO = 0
+
         """
         Fin de la declaracion de variables
         """
@@ -124,6 +139,7 @@ class Software:
         self.btnVerArbol.place(x=50, y=560)
         self.btnRepresetar.place(x=20, y=100)
         self.btnRepresetarPasoAPaso.place(x=20, y=140)
+        self.btnConfiguracion.place(x=120, y=140)
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -359,8 +375,8 @@ class Software:
         """
         ventanaEmergente = Toplevel()
         ventanaEmergente.title("Arbol")
-        ventanaEmergente.geometry("500x500")
-        tela = Canvas(ventanaEmergente, height=500, width=500, bg = "snow")
+        ventanaEmergente.geometry("640x500")
+        tela = Canvas(ventanaEmergente, height=500, width=640, bg = "snow")
 
         # Capturo los nodos del arbol
         for i in self.arbol.returnXYDeNodos():
@@ -511,6 +527,53 @@ class Software:
             
             for coordenada in data['coordenadas']:
                 self.arbol.ADD((coordenada['x'], coordenada['y']), coordenada['etiqueta'])
+
+    def abrirDialogoDeConfiguracion(self):
+        """
+        Este metodo hace que el usuario pueda confugurar
+        colores
+        """
+        ventanaEmergente = Toplevel()
+        ventanaEmergente.geometry("200x320")
+        # Se crea un canvas
+        tela = Canvas(ventanaEmergente, height=320, width=200, bg="snow")
+        tela.place(x=0, y=0)
+        btnColorEspacioDisponible = Button(tela, text="Espacio Disponible", command = lambda :self.cambiarColor(0))
+        btnColorEspacioDisponible.place(x=50, y=20)
+        btnColorPared = Button(tela, text="Paredes", command = lambda :self.cambiarColor(2))
+        btnColorPared.place(x=66, y=50)
+        btnColorNodo = Button(tela, text="Nodo", command = lambda :self.cambiarColor(3))
+        btnColorNodo.place(x=70, y=80)
+
+    
+    def cambiarColor(self, option):
+        """
+        Existen 3 elementos a editar
+        0 : Espacio disponible
+        2 : Paredes
+        3 : color del nodo
+        """
+
+        # Espacio disponible
+        if option == 0:
+            if self.tempNavegarColoresESPACIO > len(self.tempColores) - 1:
+                self.tempNavegarColoresESPACIO = 0
+
+            self.colores[option] = self.tempColores[self.tempNavegarColoresESPACIO]
+            self.tempNavegarColoresESPACIO = self.tempNavegarColoresESPACIO + 1
+        # Paredes
+        if option == 2:
+            if self.tempNavegarColoresPARED > len(self.tempColores) - 1:
+                self.tempNavegarColoresPARED = 0
+            self.colores[option] = self.tempColores[self.tempNavegarColoresPARED]
+            self.tempNavegarColoresPARED = self.tempNavegarColoresPARED + 1
+        # Color nodo
+        if option == 3:
+            if self.tempNavegarColoresNODO > len(self.tempColores) - 1:
+                self.tempNavegarColoresNODO = 0
+            self.colores[option] = self.tempColores[self.tempNavegarColoresNODO]
+            self.tempNavegarColoresNODO = self.tempNavegarColoresNODO + 1
+ 
 
     def marcarPunto(self):
         """

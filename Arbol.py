@@ -103,7 +103,7 @@ class Arbol:
     # Este metodo agrega un valor al arbol
     def ADD(self, x, label):
         # raiz, dato a agregar (x, y), eje, nivel, referencia pintado
-        self._ADD(self.raiz, x, label, 0, 0, 110, self.raiz)
+        self._ADD(self.raiz, x, label, 0, 0, 160, self.raiz)
     # Este metodo es el que en realidad agrega el nodo al arbol
     # Ojo: Solo cuando se carga desde JSON el label tiene valor
     def _ADD(self, NODO, x, label, eje, nivel, newPosX, padre):
@@ -120,7 +120,7 @@ class Arbol:
             self.raiz.padre = padre
             self.raiz.eje = 0
             self.nivel = 0
-            self.raiz.posx = 220
+            self.raiz.posx = 320
             self.raiz.posy = 20
             self.numeroDeNodos = 1
         else:
