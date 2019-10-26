@@ -108,6 +108,20 @@ class Software:
         self.tempNavegarColoresESPACIO = 0
         self.tempNavegarColoresPARED = 0
         self.tempNavegarColoresNODO = 0
+        """
+        Zona para agregar las imagenes
+        """
+        self.btnADDIMG = Button(self.telaPANELDECONTROL, text="ADD", command=self.modoAgregarIMAGEN)
+        self.btnREMOVEIMG = Button(self.telaPANELDECONTROL, text="REMOVE", command=self.modoBorrarIMAGEN)
+        # Esta varable controla si se desea agregar o eliminar una imagen
+        # 0: No hay ninguna option
+        # 1: Se desea agregar una imagen
+        # 2: Se desea borrar una imagen
+        self.optionIMG = 0
+
+        """
+        Fin de la zona para agregar las imagenes
+        """
 
         """
         Fin de la declaracion de variables
@@ -140,6 +154,8 @@ class Software:
         self.btnRepresetar.place(x=20, y=100)
         self.btnRepresetarPasoAPaso.place(x=20, y=140)
         self.btnConfiguracion.place(x=120, y=140)
+        self.btnADDIMG.place(x=20, y=200)
+        self.btnREMOVEIMG.place(x=120, y=200)
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -313,6 +329,53 @@ class Software:
         # Esto es para desmarcar los puntos anteriores
         self.PUNTOA = None
         self.PUNTOB = None
+
+    
+    def modoAgregarIMAGEN(self):
+        """
+        Si el usuario presiona 1 vez se entra en :
+            Si el usuario no ha seleccionado agregar imagen // Se entra en modo seleccionar img 1
+            Si el usuario habia seleccionado antes Eliminar imagen // Se entra en modo agregar imagen 1
+            Si el usuario habia seleccionado agregar imagen // Se desactiva eliminar y agregar 0
+        """
+        if self.optionIMG == 1:
+            self.optionIMG = 0
+            self.btnADDIMG['bg'] = "white"
+            self.btnREMOVEIMG['bg'] = "white"
+        else:
+            # Se entra en modo agregar imagen
+            self.optionIMG = 1
+            self.btnADDIMG['bg'] = "yellow"
+            self.btnREMOVEIMG['bg'] = "white"
+
+
+    def modoBorrarIMAGEN(self):
+        """
+        Si el usuario presiona 1 vez se entra en:
+            Si el usuario no ha seleccionado eliminar imagen // Se entra en modo eliminar inagen 2
+            Si el usuario habia seleccionado antes Agregar imagen // Se entra en modo eliminar imagen 2
+            Si el usuario habia seleccionado eliminar imagen antes // Se desactiva eliminar y agregar 0
+        """
+        if self.optionIMG == 2:
+            self.optionIMG = 0
+            self.btnADDIMG['bg'] = "white"
+            self.btnREMOVEIMG['bg'] = "white"
+        else:
+            # Se entra en modo agregar imagen
+            self.optionIMG = 2
+            self.btnADDIMG['bg'] = "white"
+            self.btnREMOVEIMG['bg'] = "green"
+
+    
+    def ejecutarPINTAROBORRARIMG(self):
+        """
+        Este metodo es el que agrega o elimina una imagen
+        """
+        if self.optionIMG == 1:
+            pass
+
+        if self.optionIMG == 2:
+            pass
 
 
 
@@ -553,7 +616,6 @@ class Software:
         2 : Paredes
         3 : color del nodo
         """
-
         # Espacio disponible
         if option == 0:
             if self.tempNavegarColoresESPACIO > len(self.tempColores) - 1:
