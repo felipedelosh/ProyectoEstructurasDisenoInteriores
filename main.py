@@ -23,12 +23,16 @@ from tkinter import *
 from time import *
 # Se importa el arbol
 from Arbol import *
+# Se importa para poder conocer la ruta del disco duro
+import os
 
 import json
 
 
 class Software:
     def __init__(self):
+        # Llamo el directorio para poder 
+        self.rutaDelProyecto = os.path.dirname(os.path.abspath(__file__))
         # Pantalla principal
         self.pantalla = Tk()
         # Parte donde se grafican los interiores
@@ -118,6 +122,13 @@ class Software:
         # 1: Se desea agregar una imagen
         # 2: Se desea borrar una imagen
         self.optionIMG = 0
+        # Imagenes
+        self.imgSilla = PhotoImage(file=self.rutaDelProyecto+"\\img\\silla.png")
+        self.imgBTNSilla = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\silla.png")
+
+
+        # Botones referenciados a la imagen
+        self.btnSilla = Button(self.telaPANELDECONTROL, image = self.imgBTNSilla)
 
         """
         Fin de la zona para agregar las imagenes
@@ -156,6 +167,8 @@ class Software:
         self.btnConfiguracion.place(x=120, y=140)
         self.btnADDIMG.place(x=20, y=200)
         self.btnREMOVEIMG.place(x=120, y=200)
+        # Se pintan los botones de los objetos de interior
+        self.btnSilla.place(x=20, y=240)
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -447,7 +460,6 @@ class Software:
             tela.create_oval(i[0], i[1], i[0]+55, i[1]+55)
             # SE pinta la leyenda
             tela.create_text(i[0]+24, i[1]+20, text=str(i[2]))
-
 
         tela.place(x=0, y=0)
 
