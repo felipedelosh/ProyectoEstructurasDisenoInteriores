@@ -38,7 +38,7 @@ class Software:
         # Parte donde se grafican los interiores
         self.telaMAPA = Canvas(self.pantalla, height=600, width=700, bg="snow")
         # a la tela mapa se le agrega el evento touch
-        self.telaMAPA.bind_all("<Button-1>", self.click)
+        self.telaMAPA.bind("<Button-1>", self.click)
         # Parte donde se grafican los controles, Agregar, Eliminar, Modificar
         self.telaPANELDECONTROL = Canvas(self.pantalla, height=600, width=200, bg="blue2")
         self.btnADDpunto = Button(self.telaPANELDECONTROL, text="Agregar", command=self.modoAgregarPuntos)
@@ -49,6 +49,7 @@ class Software:
         self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Paso a Paso", command=self.representarArbolPasoAPaso)
         self.btnLoadJSON = Button(self.telaPANELDECONTROL, text="LOAD JSON", command=self.lecturaJSON)
         self.btnConfiguracion = Button(self.telaPANELDECONTROL, text="CONFIG", command=self.abrirDialogoDeConfiguracion)
+
         """
         Variables
         """
@@ -122,14 +123,29 @@ class Software:
         # 1: Se desea agregar una imagen
         # 2: Se desea borrar una imagen
         self.optionIMG = 0
+        # Esta variable controla el tipo de img que se esta agregando
+        # 0: Ninguna
+        # 1: Silla
+        # 2: mesa
+        self.queIMGAgregar = 0
         # Imagenes
         self.imgSilla = PhotoImage(file=self.rutaDelProyecto+"\\img\\silla.png")
         self.imgBTNSilla = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\silla.png")
+        self.imgMesa = PhotoImage(file=self.rutaDelProyecto+"\\img\\mesa.png")
+        self.imgBTNMesa = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\mesa.png")
+        
 
 
         # Botones referenciados a la imagen
-        self.btnSilla = Button(self.telaPANELDECONTROL, image = self.imgBTNSilla)
+        self.btnSilla = Button(self.telaPANELDECONTROL, image = self.imgBTNSilla, command = lambda : self.seleccionarImagenAagregar(1))
+        self.btnMesa = Button(self.telaPANELDECONTROL, image = self.imgBTNMesa, command = lambda : self.seleccionarImagenAagregar(2))
 
+
+        # rectangulos que controlan agregar o eliminar img
+        # Osea si se agrega un elemento se genera un rectangulo... y si lo clickeo?
+        self.cotroladoraIMGREG = []
+        # Esto le da un ID a cada imagen para poder capturarla para eliminarla
+        self.idIMG = 0
         """
         Fin de la zona para agregar las imagenes
         """
@@ -169,6 +185,7 @@ class Software:
         self.btnREMOVEIMG.place(x=120, y=200)
         # Se pintan los botones de los objetos de interior
         self.btnSilla.place(x=20, y=240)
+        self.btnMesa.place(x=70, y=240)
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -284,6 +301,13 @@ class Software:
                         self.marcarPunto()
                     except:
                         print("Espere...")
+
+            # Si deseo Agregar una IMG o Borrarla
+            if self.ejecutarPINTAROBORRARIMG():
+                if self.optionIMG == 1:
+                    self.pintarIMAGENENMAPA(_mouseClick)
+                else:
+                    self.borrarIMAGENMAPA(_mouseClick)
                     
             self.puedoClickear = True 
 
@@ -351,6 +375,12 @@ class Software:
             Si el usuario habia seleccionado antes Eliminar imagen // Se entra en modo agregar imagen 1
             Si el usuario habia seleccionado agregar imagen // Se desactiva eliminar y agregar 0
         """
+        # Se desactivan los modos agregar, Eliminar, modificar
+        self.option = 0
+        self.btnADDpunto['bg'] = "white"
+        self.btnEliminarPunto['bg'] = "white"
+        self.btnModificarPunto['bg'] = "white"
+
         if self.optionIMG == 1:
             self.optionIMG = 0
             self.btnADDIMG['bg'] = "white"
@@ -371,6 +401,7 @@ class Software:
         """
         if self.optionIMG == 2:
             self.optionIMG = 0
+            self.queIMGAgregar = 0
             self.btnADDIMG['bg'] = "white"
             self.btnREMOVEIMG['bg'] = "white"
         else:
@@ -379,17 +410,54 @@ class Software:
             self.btnADDIMG['bg'] = "white"
             self.btnREMOVEIMG['bg'] = "green"
 
+    def seleccionarImagenAagregar(self, tipoIMG):
+        print("TIPO DE IMG", tipoIMG)
+        self.queIMGAgregar = tipoIMG
+
     
     def ejecutarPINTAROBORRARIMG(self):
         """
-        Este metodo es el que agrega o elimina una imagen
+        Este metodo es el que verifica agrega o elimina una imagen.
+        PARA PODER AGREGAR: hay que seleccionar que img agregar primero
+        PARA PODER ELIMINAR: Espichar el boton eliminar primero
         """
-        if self.optionIMG == 1:
-            pass
+        if self.optionIMG == 1 and self.queIMGAgregar != 0:
+            return True
 
         if self.optionIMG == 2:
-            pass
+            return True
 
+        return False
+
+    def pintarIMAGENENMAPA(self, pos):
+        """
+        Este metodo viene desde el click 
+        aqui se agrega la img correspondiente donde el mouse diga
+        """
+        # Agrego al vector que controla las images
+        k = (pos[0], pos[1], "img"+str(self.idIMG))
+        # Si deseo pintar una silla
+        if self.queIMGAgregar == 1:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgSilla, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar una mesa
+        if self.queIMGAgregar == 2:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgMesa, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        
+
+    def borrarIMAGENMAPA(self, pos):
+        # Si clikeo una img procedo a pintarla
+        for i in self.cotroladoraIMGREG:
+            print(i)
 
 
     def ejecutarOperacion(self):
@@ -439,10 +507,6 @@ class Software:
                     self.PUNTOB = temp
                     # Lo modifico en el arbol
                     self.arbol.modificarData(self.PUNTOA, self.PUNTOB)
-
-        print(self.option)
-        print(self.elementoSeleccionado)
-
 
     def verElArbol(self):
         """
