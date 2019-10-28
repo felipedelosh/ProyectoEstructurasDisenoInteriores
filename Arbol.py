@@ -81,8 +81,6 @@ class Nodo:
         return (not self.DER and not self.IZQ)
 
         
-
-
 """
 a los 18 dias de oct de 2019
 
@@ -290,13 +288,58 @@ class Arbol:
                 # Sera que esta a la derecha?
                 if self.nodoTemporal.DER != None:
                     if self.nodoTemporal.DER.data == data:
-                        print("Esta a la derecha pa borrar")
+                        # Si el nodo es una hoja pues simplemente lo elimino
+                        if self.nodoTemporal.DER.DER == None and self.nodoTemporal.DER.IZQ == None:
+                            self.nodoTemporal.DER = None
+                            return True
 
+                        # Si el nodo tiene un unico hijo pues simplemente reemplazo
+                        tieneNietoDER = self.nodoTemporal.DER.DER != None and self.nodoTemporal.DER.IZQ == None
+                        tieneNieroIZQ = self.nodoTemporal.DER.DER == None and self.nodoTemporal.DER.IZQ != None
+
+                        if tieneNietoDER or tieneNieroIZQ:
+                            if tieneNietoDER:
+                                self.nodoTemporal.DER = self.nodoTemporal.DER.DER 
+                                return True
+
+                            if tieneNieroIZQ:
+                                self.nodoTemporal.DER = self.nodoTemporal.DER.IZQ
+                                return True
+
+
+                        print("ESTA A LA DERECHA PARA ELIMINAR")
 
                 #Sera que esta a la izquierda?
                 if self.nodoTemporal.IZQ != None:
                     if self.nodoTemporal.IZQ.data == data:
-                        print("Esta a la IZq pa borrarlo")                
+                        # Si el nodo es una hoja pues simplemente lo elimino
+                        if self.nodoTemporal.IZQ.DER == None and self.nodoTemporal.IZQ.IZQ == None:
+                            self.nodoTemporal.IZQ = None
+
+                        # Si el noxo tiene un unico hijo pues reemplazo
+
+                        tieneNietoDER = self.nodoTemporal.IZQ.DER != None and self.nodoTemporal.IZQ.IZQ == None
+                        tieneNietoIZQ = self.nodoTemporal.IZQ.DER == None and self.nodoTemporal.IZQ.IZQ != None
+                        
+                        # Reemplazo hijo por nieto
+                        if tieneNietoDER or tieneNietoIZQ:
+                            if tieneNietoDER:
+                                self.nodoTemporal.IZQ = self.nodoTemporal.IZQ.DER
+                                return True
+
+                            if tieneNietoIZQ:
+                                self.nodoTemporal.IZQ = self.nodoTemporal.IZQ.IZQ
+                                return True
+
+                        print("Esta a la IZQ PRA ELIMINAR")
+
+
+                
+
+
+
+        # Como no encontro nada pues retorno falso
+        return False
 
     def _BuscarParaEliminar(self, NODO, data):
         """
@@ -324,15 +367,7 @@ class Arbol:
                 else:
                     # busquelo por la izquierda
                     self._BuscarParaEliminar(NODO.IZQ, data)
-    
-            
 
-
-
-
-            
-
-    
 
     # Este metodo retorna el arbol como un vector
     def returnArbolComoVector(self):
@@ -348,8 +383,6 @@ class Arbol:
             self.arbolVectorizado.append(k)
             self._returnArbolComoVector(NODO.IZQ)
             self._returnArbolComoVector(NODO.DER)
-
-
                         
     # Este metodo retorna los Nodos como puntos x,y en el plano
     def returnXYDeNodos(self):
@@ -469,17 +502,3 @@ class Arbol:
                 node = self._searchNode(label, parent.hasRightChild())
                 #Y si no lo encuentra los busca por el hijo derecho
             return node
-
-a = Arbol()
-a.ADD((5, 8), "X")
-a.ADD((1, 13), "X")
-a.ADD((10, 15), "X")
-a.ADD((20, 12), "X")
-a.ADD((11, 15), "X")
-a.ADD((14, 8), "X")
-
-print(a.returnArbolComoVector())
-
-a.eliminarNodo((20, 12))
-
-print(a.returnArbolComoVector())
