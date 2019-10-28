@@ -133,14 +133,37 @@ class Software:
         self.imgBTNSilla = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\silla.png")
         self.imgMesa = PhotoImage(file=self.rutaDelProyecto+"\\img\\mesa.png")
         self.imgBTNMesa = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\mesa.png")
+        self.imgNevera = PhotoImage(file=self.rutaDelProyecto+"\\img\\nevera.png")
+        self.imgBTNNEvera = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\nevera.png")
+        self.imgCama = PhotoImage(file=self.rutaDelProyecto+"\\img\\cama.png")
+        self.imgBTNCama = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\cama.png")
+        self.imgSofa = PhotoImage(file=self.rutaDelProyecto+"\\img\\sofa.png")
+        self.imgBTNSofa = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\sofa.png")
+        self.imgTV =  PhotoImage(file=self.rutaDelProyecto+"\\img\\tv.png")
+        self.imgBTNTV = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\tv.png")
+        self.imgLampara = PhotoImage(file=self.rutaDelProyecto+"\\img\\lampara.png")
+        self.imgBTNLampara = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\lampara.png")
+        self.imgPlanta = PhotoImage(file=self.rutaDelProyecto+"\\img\\planta.png")
+        self.imgBTNPlanta = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\planta.png")
+        self.imgSanitario = PhotoImage(file=self.rutaDelProyecto+"\\img\\sanitario.png")
+        self.imgBTNSanitario = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\sanitario.png")
+        self.imgLavamanos = PhotoImage(file=self.rutaDelProyecto+"\\img\\lavamanos.png")
+        self.imgBTNLavamanos = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\lavamanos.png")
+        self.imgDucha = PhotoImage(file=self.rutaDelProyecto+"\\img\\ducha.png")
+        self.imgBTNDucha = PhotoImage(file=self.rutaDelProyecto+"\\img\\ico\\ducha.png")
         
-
-
         # Botones referenciados a la imagen
         self.btnSilla = Button(self.telaPANELDECONTROL, image = self.imgBTNSilla, command = lambda : self.seleccionarImagenAagregar(1))
         self.btnMesa = Button(self.telaPANELDECONTROL, image = self.imgBTNMesa, command = lambda : self.seleccionarImagenAagregar(2))
-
-
+        self.btnNevera = Button(self.telaPANELDECONTROL, image = self.imgBTNNEvera, command = lambda : self.seleccionarImagenAagregar(3))
+        self.btnCama = Button(self.telaPANELDECONTROL, image = self.imgBTNCama, command = lambda : self.seleccionarImagenAagregar(4))
+        self.btnSofa = Button(self.telaPANELDECONTROL, image = self.imgBTNSofa, command = lambda : self.seleccionarImagenAagregar(5))
+        self.btnTV = Button(self.telaPANELDECONTROL, image = self.imgBTNTV, command = lambda : self.seleccionarImagenAagregar(6))
+        self.btnLampara = Button(self.telaPANELDECONTROL, image = self.imgBTNLampara, command = lambda : self.seleccionarImagenAagregar(7))
+        self.btnPlanta = Button(self.telaPANELDECONTROL, image = self.imgBTNPlanta, command = lambda : self.seleccionarImagenAagregar(8))
+        self.btnSanitario = Button(self.telaPANELDECONTROL, image = self.imgBTNSanitario, command = lambda : self.seleccionarImagenAagregar(9))
+        self.btnLavamanos = Button(self.telaPANELDECONTROL, image = self.imgBTNLavamanos, command = lambda : self.seleccionarImagenAagregar(10))
+        self.btnDucha = Button(self.telaPANELDECONTROL, image = self.imgBTNDucha, command = lambda : self.seleccionarImagenAagregar(11))
         # rectangulos que controlan agregar o eliminar img
         # Osea si se agrega un elemento se genera un rectangulo... y si lo clickeo?
         self.cotroladoraIMGREG = []
@@ -185,7 +208,17 @@ class Software:
         self.btnREMOVEIMG.place(x=120, y=200)
         # Se pintan los botones de los objetos de interior
         self.btnSilla.place(x=20, y=240)
-        self.btnMesa.place(x=70, y=240)
+        self.btnMesa.place(x=80, y=240)
+        self.btnNevera.place(x=140, y=240)
+        self.btnCama.place(x=20, y=290)
+        self.btnSofa.place(x=80, y=290)
+        self.btnTV.place(x=140, y=290)
+        self.btnLampara.place(x=20, y=340)
+        self.btnPlanta.place(x=80, y=340)
+        self.btnSanitario.place(x=140, y=340)
+        self.btnLavamanos.place(x=20, y=390)
+        self.btnDucha.place(x=80, y=390)
+
         # Se pintan las lineas
         self.PINTARLEYENDAPLANOXY()
         # Se lanza el evento que actualiza la pantalla
@@ -452,12 +485,88 @@ class Software:
             # Como una img fue agregada procedo a aumentar el id
             self.idIMG = self.idIMG + 1
 
+        # Se deseo pintar una nevera
+        if self.queIMGAgregar == 3:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgNevera, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar una cama
+        if self.queIMGAgregar == 4:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgCama, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar un sofa
+        if self.queIMGAgregar == 5:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgSofa, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar tv
+        if self.queIMGAgregar == 6:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgTV, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar lampara
+        if self.queIMGAgregar == 7:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgLampara, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar planta
+        if self.queIMGAgregar == 8:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgPlanta, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar sanitario
+        if self.queIMGAgregar == 9:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgSanitario, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar lavamanos
+        if self.queIMGAgregar == 10:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgLavamanos, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1
+
+        # Si deseo pintar la ducha
+        if self.queIMGAgregar == 11:
+            self.telaMAPA.create_image(k[0], k[1], image=self.imgDucha, tag=k[2])
+            # Como fue agregado un elemento en el mapa procedo a registrarlo
+            self.cotroladoraIMGREG.append(k)
+            # Como una img fue agregada procedo a aumentar el id
+            self.idIMG = self.idIMG + 1 
         
 
     def borrarIMAGENMAPA(self, pos):
         # Si clikeo una img procedo a pintarla
         for i in self.cotroladoraIMGREG:
-            print(i)
+            # Si colosiona borrelo
+            if pos[0] >= i[0]-20 and pos[0] < i[0] + 20:
+                if pos[1] >= i[1] - 24 and pos[1] < i[1]+24:
+                    self.telaMAPA.delete(i[2])
+                    # Para que no se borre todo se rompre
+                    break
 
 
     def ejecutarOperacion(self):
