@@ -271,6 +271,20 @@ class Arbol:
             k.data = newX
 
 
+    def invertirEjesArbol(self):
+        self._invertirEjesArbol(self.raiz)
+
+    def _invertirEjesArbol(self, NODO):
+        if NODO != None:
+            if NODO.eje == 0:
+                NODO.eje = 1
+            else:
+                NODO.eje = 0
+
+            self._invertirEjesArbol(NODO.DER)
+            self._invertirEjesArbol(NODO.IZQ)
+
+
     def eliminarNodo(self, data):
         """
         Este metodo es muy diferente al buscar, aqui tenemos que capturar el hijo 
@@ -306,7 +320,6 @@ class Arbol:
                                 self.nodoTemporal.DER = self.nodoTemporal.DER.IZQ
                                 return True
 
-
                         print("ESTA A LA DERECHA PARA ELIMINAR")
 
                 #Sera que esta a la izquierda?
@@ -332,11 +345,6 @@ class Arbol:
                                 return True
 
                         print("Esta a la IZQ PRA ELIMINAR")
-
-
-                
-
-
 
         # Como no encontro nada pues retorno falso
         return False

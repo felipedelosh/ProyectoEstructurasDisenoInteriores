@@ -49,6 +49,7 @@ class Software:
         self.btnRepresetarPasoAPaso = Button(self.telaPANELDECONTROL, text="Paso a Paso", command=self.representarArbolPasoAPaso)
         self.btnLoadJSON = Button(self.telaPANELDECONTROL, text="LOAD JSON", command=self.lecturaJSON)
         self.btnConfiguracion = Button(self.telaPANELDECONTROL, text="CONFIG", command=self.abrirDialogoDeConfiguracion)
+        self.btnPlanoAlternativo = Button(self.telaPANELDECONTROL, text="ALT", command=self.generarPlanoAlternativo)
 
         """
         Variables
@@ -204,6 +205,7 @@ class Software:
         self.btnRepresetar.place(x=20, y=100)
         self.btnRepresetarPasoAPaso.place(x=20, y=140)
         self.btnConfiguracion.place(x=120, y=140)
+        self.btnPlanoAlternativo.place(x=140, y=100)
         self.btnADDIMG.place(x=20, y=200)
         self.btnREMOVEIMG.place(x=120, y=200)
         # Se pintan los botones de los objetos de interior
@@ -360,6 +362,8 @@ class Software:
         else:
             return False
 
+    def generarPlanoAlternativo(self):
+        self.arbol.invertirEjesArbol()
 
     def selected(self, item):
         """
@@ -565,9 +569,10 @@ class Software:
             if pos[0] >= i[0]-20 and pos[0] < i[0] + 20:
                 if pos[1] >= i[1] - 24 and pos[1] < i[1]+24:
                     self.telaMAPA.delete(i[2])
+                    # Se borra ese elemento de la lista
+                    self.cotroladoraIMGREG.remove(i)
                     # Para que no se borre todo se rompre
                     break
-
 
     def ejecutarOperacion(self):
         """
